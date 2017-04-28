@@ -42,7 +42,7 @@ if (EMSCRIPTEN)
     set(CMAKE_CXX_CREATE_STATIC_LIBRARY "<CMAKE_AR> -o <TARGET> <LINK_FLAGS> <OBJECTS>")
 endif()
 
-set(CMAKE_CXX_FLAGS "-std=c++11 --bind -Oz -s RESERVED_FUNCTION_POINTERS=20 -s EXPORT_NAME=\"'ZXing'\" -s MODULARIZE=1 -s DISABLE_EXCEPTION_CATCHING=0 --memory-init-file 0 -s EXPORTED_FUNCTIONS=\"['_resize','_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
+set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s WASM=1 -O3 -s RESERVED_FUNCTION_POINTERS=20 -s EXPORT_NAME=\"'ZXing'\" -s MODULARIZE=1 -s DISABLE_EXCEPTION_CATCHING=0 -s EXPORTED_FUNCTIONS=\"['_resize','_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
 
 # Add libzxing library.
 file(GLOB_RECURSE LIBZXING_FILES

@@ -43,12 +43,28 @@
 #include <zxing/common/Array.h>
 
 #include <emscripten.h>
-
+#include <emscripten/bind.h>
 using namespace std;
 using namespace zxing;
 using namespace zxing::qrcode;
 using namespace zxing::multi;
+using namespace emscripten;
+struct Point2DF {
+  float x;
+  float y;
+};
 
+struct Quadrilateral {
+  Point2DF north_east;
+  Point2DF south_east;
+  Point2DF south_west;
+  Point2DF north_west;
+};
+
+struct ZXingResult {
+  string data;
+  Quadrilateral locus;
+};
 
 class ImageReaderSource : public zxing::LuminanceSource {
 private:
@@ -214,79 +230,91 @@ extern "C" {
     return imagePtr;
   }
 
-
-  int __decode(DECODE_MODE mode, void *decode_callback(const char *resultStr, int resultStrLen, int resultIndex, int resultCount,
-    float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3 )) {
-    vector<Ref<Result> > results;
-    int res = -1;
-
+  vector<ZXingResult> * __decode(DECODE_MODE mode, unsigned char * data, int width, int height) {
+    vector<ZXingResult> * ex_results = new vector<ZXingResult>();
     Ref<Binarizer> binarizer;
     Ref<BinaryBitmap> binary;
-
+    vector<Ref<Result> > results;
     try {
 
       DecodeHints hints(DecodeHints::DEFAULT_HINT);
 
       binarizer = new HybridBinarizer(source);
       binary = new BinaryBitmap(binarizer);
-
-      if (mode == DECODE_MODE::QR) {
-        results = decode_qr_(binary, hints);
-      } else if (mode == DECODE_MODE::QR_MULTI) {
-        results = decode_qr_multi_(binary, hints);
-      } else if (mode == DECODE_MODE::ANY) {
-        results = decode_any_(binary, hints);
-      } else {
-        results = decode_multi_(binary, hints);
+      switch(mode) {
+        case DECODE_MODE::QR:
+          results = decode_qr_(binary, hints);
+          break;
+        case DECODE_MODE::QR_MULTI:
+          results = decode_qr_multi_(binary, hints);
+          break;
+        case DECODE_MODE::ANY:
+          results = decode_any_(binary, hints);
+          break;
+        case DECODE_MODE::MULTI:
+          results = decode_multi_(binary, hints);
+          break;
       }
 
-      res = 0;
-
-    } catch (const ReaderException& e) {
-      // cell_result = "zxing::ReaderException: " + string(e.what());
-      res = -2;
-    } catch (const zxing::IllegalArgumentException& e) {
-      // cell_result = "zxing::IllegalArgumentException: " + string(e.what());
-      res = -3;
-    } catch (const zxing::Exception& e) {
-      // cell_result = "zxing::Exception: " + string(e.what());
-      res = -4;
-    } catch (const std::exception& e) {
-      // cell_result = "std::exception: " + string(e.what());
-      res = -5;
-    }
-
-    if (res == 0) {
       for (int i=0; i<results.size(); i++) {
-        std::string result = results[i]->getText()->getText();
         auto points = results[i]->getResultPoints();
-        decode_callback(result.c_str(), result.size(), i, results.size(), 
-          points[0]->getX(), points[0]->getY(),
-          points[1]->getX(), points[1]->getY(),
-          points[2]->getX(), points[2]->getY(),
-          points[3]->getX(), points[3]->getY()
-        );
+        Quadrilateral locus = {
+          {points[0]->getX(), points[0]->getY()},
+          {points[1]->getX(), points[1]->getY()},
+          {points[2]->getX(), points[2]->getY()},
+          {points[3]->getX(), points[3]->getY()}
+        };
+        ZXingResult newResult = {results[i]->getText()->getText(),locus};
+        ex_results->push_back(newResult);
       }
+    } catch (const ReaderException& e) {
+      // cout << e << endl;
+    } catch (const zxing::IllegalArgumentException& e) {
+      // cout << e << endl;
+    } catch (const zxing::Exception& e) {
+      // cout << e << endl;
+    } catch (const std::exception& e) {
+      // cout << e << endl;
     }
-
-    return res;
+    return ex_results;
   }
 
-
-  int decode_qr(void *callback(const char*, int, int, int, float, float, float, float, float, float, float, float)) {
-    return __decode(DECODE_MODE::QR, callback);
+  vector<ZXingResult> * decode_qr(unsigned char * data, int width, int height) {
+    return __decode(DECODE_MODE::QR, data, width, height);
   }
 
-  int decode_qr_multi(void *callback(const char*, int, int, int, float, float, float, float, float, float, float, float)) {
-    return __decode(DECODE_MODE::QR_MULTI, callback);
+  vector<ZXingResult> * decode_qr_multi(unsigned char * data, int width, int height) {
+    return __decode(DECODE_MODE::QR_MULTI, data, width, height);
   }
 
-  int decode_any(void *callback(const char*, int, int, int, float, float, float, float, float, float, float, float)) {
-    return __decode(DECODE_MODE::ANY, callback);
+  vector<ZXingResult> * decode_any(unsigned char * data, int width, int height) {
+    return __decode(DECODE_MODE::ANY, data, width, height);
   }
 
-  int decode_multi(void *callback(const char*, int, int, int, float, float, float, float, float, float, float, float)) {
-    return __decode(DECODE_MODE::MULTI, callback);
+  vector<ZXingResult> * decode_multi(unsigned char * data, int width, int height) {
+    return __decode(DECODE_MODE::MULTI, data, width, height);
   }
+}
 
+vector<ZXingResult> * vectorZXingResultFromIntPointer(uintptr_t ptr) {
+    return reinterpret_cast<vector<ZXingResult > *>(ptr);
+}
+
+EMSCRIPTEN_BINDINGS(zxing) {
+  value_object<Point2DF>("Point2DF")
+    .field("x", &Point2DF::x)
+    .field("y", &Point2DF::y)
+    ;
+
+  value_object<Quadrilateral>("Quadrilateral")
+    .field("north_east", &Quadrilateral::north_east)
+    .field("south_east", &Quadrilateral::south_east)
+    .field("south_west", &Quadrilateral::south_west)
+    .field("north_west", &Quadrilateral::north_west)
+    ;
+  value_object<ZXingResult>("ZXingResult")
+    .field("data", &ZXingResult::data)
+    .field("locus", &ZXingResult::locus)
+    ;
+  register_vector<ZXingResult>("VectorZXingResult").constructor(&vectorZXingResultFromIntPointer, allow_raw_pointers());
 }
