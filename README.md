@@ -14,59 +14,26 @@ To build:
 To use:
 
 ``` javascript
+    <script src="zxing.js"></script>
     <script type="text/javascript">
-      var tick = function() {
-        if (window.ZXing) {
-          ZXing = ZXing();
-          doSomeDetecting();
-        } else {
-          setTimeout(tick, 10);
-        }
-      };
-      setTimeout(tick, 10);
+      ZXing = new ZXing();
 
       var doSomeDetecting = function() {
 
-          var resultString;
+      var len = myImageData.length;
+      var image = ZXing._malloc(len);
+      ZXing.HEAPU8.set(myImageData, image);
 
-          // JS callback to receive the result pointer from C++
-          var decodeCallback = function(ptr, len, resultIndex, resultCount) {
-            // Convert the result C string into a JS string.
-            var result = new Uint8Array(ZXing.HEAPU8.buffer, ptr, len);
-            resultString = String.fromCharCode.apply(null, result);
-          };
-          var decodePtr = ZXing.Runtime.addFunction(decodeCallback);
+      var ptr = ZXing._decode_qr(image, width, height);
+      // instantiate, read and teardown
+      detected_codes = new ZXing.VectorZXingResult(ptr);
+      for(i = 0; i < detected_codes.size(); i++) {
+        console.log(detected_codes.get(i))
+      }
+      detected_codes.delete();
 
-          // Get a write pointer for the QR image data array.
-          // The write pointer is a pointer to a width*height Uint8Array of grayscale values.
-          var imageWritePtr = ZXing._resize(width, height);
-
-          // Copy your image data to the QR image data array.
-          for (var i=0, j=0; i<myGrayscaleImageData.length; i++, j++) {
-            ZXing.HEAPU8[imageWritePtr + j] = myGrayscaleImageData[i];
-          }
-
-          // Detect a QRcode in the image.
-          var err = ZXing._decode_qr(decodePtr);
-
-          // Detect a barcode in the image.
-          // err = ZXing._decode_any(decodePtr);
-
-          // Detect multiple QRcodes in the image.
-          // If there are multiple QRcodes detected, decodePtr is called with each.
-          // err = ZXing._decode_qr_multi(decodePtr);
-
-          // Detect multiple barcodes in the image.
-          // If there are multiple barcodes detected, decodePtr is called with each.
-          // err = ZXing._decode_multi(decodePtr);
-
-          console.log("error code", err);
-          console.log("result", resultString);
-
-        }
       };
     </script>
-    <script async src="zxing.js"></script>
 ```
 
 To hack: 

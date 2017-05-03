@@ -188,27 +188,6 @@ Ref<Binarizer> PassthroughBinarizer::createBinarizer(Ref<LuminanceSource> source
   return Ref<Binarizer> (new PassthroughBinarizer(source));
 }
 
-vector<Ref<Result> > decode_qr_(Ref<BinaryBitmap> image, DecodeHints hints) {
-  Ref<Reader> qrCodeReader(new QRCodeReader);
-  return vector<Ref<Result> >(1, qrCodeReader->decode(image, hints));
-}
-
-vector<Ref<Result> > decode_qr_multi_(Ref<BinaryBitmap> image, DecodeHints hints) {
-  Ref<MultipleBarcodeReader> qrCodeMultiReader(new QRCodeMultiReader);
-  return qrCodeMultiReader->decodeMultiple(image, hints);
-}
-
-vector<Ref<Result> > decode_any_(Ref<BinaryBitmap> image, DecodeHints hints) {
-  Ref<Reader> multiFormatReader(new MultiFormatReader);
-  return vector<Ref<Result> >(1, multiFormatReader->decode(image, hints));
-}
-
-vector<Ref<Result> > decode_multi_(Ref<BinaryBitmap> image, DecodeHints hints) {
-  MultiFormatReader delegate;
-  GenericMultipleBarcodeReader genericReader(delegate);
-  return genericReader.decodeMultiple(image, hints);
-}
-
 enum DECODE_MODE {
   QR,
   QR_MULTI,
@@ -219,22 +198,16 @@ enum DECODE_MODE {
 
 extern "C" {
 
-  static const char *imagePtr = NULL;
-  static zxing::ArrayRef<char> image = NULL;
-  static Ref<LuminanceSource> source;
-
-  const char* resize(int width, int height) {
-    image = zxing::ArrayRef<char>(width*height);
-    imagePtr = &image[0];
-    source = Ref<LuminanceSource>(new ImageReaderSource(image, width, height));
-    return imagePtr;
-  }
-
   vector<ZXingResult> * __decode(DECODE_MODE mode, unsigned char * data, int width, int height) {
     vector<ZXingResult> * ex_results = new vector<ZXingResult>();
     Ref<Binarizer> binarizer;
     Ref<BinaryBitmap> binary;
     vector<Ref<Result> > results;
+    zxing::ArrayRef<char> image = zxing::ArrayRef<char>(width*height);
+    Ref<LuminanceSource> source = Ref<LuminanceSource>(new ImageReaderSource(image, width, height));
+    for(int i = 0; i < height*width; i++) {
+      image[i] = data[i*4];
+    }
     try {
 
       DecodeHints hints(DecodeHints::DEFAULT_HINT);
@@ -255,7 +228,6 @@ extern "C" {
           results = decode_multi_(binary, hints);
           break;
       }
-
       for (int i=0; i<results.size(); i++) {
         auto points = results[i]->getResultPoints();
         Quadrilateral locus = {
@@ -269,10 +241,13 @@ extern "C" {
       }
     } catch (const ReaderException& e) {
       // cout << e << endl;
+      cout << "reader exception" << endl;
     } catch (const zxing::IllegalArgumentException& e) {
       // cout << e << endl;
+      cout << "illegal arg" << endl;
     } catch (const zxing::Exception& e) {
       // cout << e << endl;
+      cout << "general zxing error" << endl;
     } catch (const std::exception& e) {
       // cout << e << endl;
     }
