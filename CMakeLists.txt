@@ -4,7 +4,8 @@
 #
 project(zxing)
 cmake_minimum_required(VERSION 2.8.0)
-
+message(STATUS ${WASM_CXXFLAGS})
+message(STATUS ${EXPORTED_FUNCTIONS})
 set(CMAKE_LIBRARY_PATH /opt/local/lib ${CMAKE_LIBRARY_PATH})
 
 # Check for polluted source tree.
@@ -42,8 +43,13 @@ if (EMSCRIPTEN)
     set(CMAKE_CXX_CREATE_STATIC_LIBRARY "<CMAKE_AR> -o <TARGET> <LINK_FLAGS> <OBJECTS>")
 endif()
 
+if(WASM_CXXFLAGS)
+message(STATUS "pulling from cli")
+set(CMAKE_CXX_FLAGS "${WASM_CXXFLAGS} ${EXPORTED_FUNCTIONS}")
+message(STATUS ${CMAKE_CXX_FLAGS})
+else()
 set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O3 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 -s EXPORTED_FUNCTIONS=\"['_resize','_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
-
+endif()
 # Add libzxing library.
 file(GLOB_RECURSE LIBZXING_FILES
     "./core/src/*.cpp"
@@ -74,5 +80,5 @@ if(CPPUNIT_FOUND)
     include_directories(${CPPUNIT_INCLUDE_DIR})
     target_link_libraries(testrunner libzxing  ${CPPUNIT_LIBRARIES})
 else()
-    message(WARNING "Not building testrunner, because CppUnit is missing")
+    message(STATUS "Not building testrunner, because CppUnit is missing")
 endif()

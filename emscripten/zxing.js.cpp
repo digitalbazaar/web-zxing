@@ -188,6 +188,27 @@ Ref<Binarizer> PassthroughBinarizer::createBinarizer(Ref<LuminanceSource> source
   return Ref<Binarizer> (new PassthroughBinarizer(source));
 }
 
+vector<Ref<Result> > decode_qr_(Ref<BinaryBitmap> image, DecodeHints hints) {
+  Ref<Reader> qrCodeReader(new QRCodeReader);
+  return vector<Ref<Result> >(1, qrCodeReader->decode(image, hints));
+}
+
+vector<Ref<Result> > decode_qr_multi_(Ref<BinaryBitmap> image, DecodeHints hints) {
+  Ref<MultipleBarcodeReader> qrCodeMultiReader(new QRCodeMultiReader);
+  return qrCodeMultiReader->decodeMultiple(image, hints);
+}
+
+vector<Ref<Result> > decode_any_(Ref<BinaryBitmap> image, DecodeHints hints) {
+  Ref<Reader> multiFormatReader(new MultiFormatReader);
+  return vector<Ref<Result> >(1, multiFormatReader->decode(image, hints));
+}
+
+vector<Ref<Result> > decode_multi_(Ref<BinaryBitmap> image, DecodeHints hints) {
+  MultiFormatReader delegate;
+  GenericMultipleBarcodeReader genericReader(delegate);
+  return genericReader.decodeMultiple(image, hints);
+}
+
 enum DECODE_MODE {
   QR,
   QR_MULTI,
