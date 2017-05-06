@@ -1260,7 +1260,7 @@ vinyl@^0.5.0:
 
 "wasm-init@git+https://github.com/H-Plus-Time/wasm-init.git":
   version "0.0.37"
-  resolved "git+https://github.com/H-Plus-Time/wasm-init.git#b02923f20ec38901233115992aef2deb63d35c96"
+  resolved "git+https://github.com/H-Plus-Time/wasm-init.git#7994ae7342bf39735f71bf7e083a7429e8bda264"
   dependencies:
     colors "^1.1.2"
     express "^4.15.2"

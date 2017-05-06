@@ -42,14 +42,15 @@ if (EMSCRIPTEN)
     set(CMAKE_C_CREATE_STATIC_LIBRARY "<CMAKE_AR> -o <TARGET> <LINK_FLAGS> <OBJECTS>")
     set(CMAKE_CXX_CREATE_STATIC_LIBRARY "<CMAKE_AR> -o <TARGET> <LINK_FLAGS> <OBJECTS>")
 endif()
-
 if(WASM_CXXFLAGS)
-message(STATUS "pulling from cli")
-set(CMAKE_CXX_FLAGS "${WASM_CXXFLAGS} ${EXPORTED_FUNCTIONS}")
-message(STATUS ${CMAKE_CXX_FLAGS})
-else()
-set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O3 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 -s EXPORTED_FUNCTIONS=\"['_resize','_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
+    message(STATUS ${WASM_CXXFLAGS})
 endif()
+if(WASM_CXXFLAGS)
+    set(CMAKE_CXX_FLAGS ${WASM_CXXFLAGS})
+else()
+    set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O3 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
+endif()
+
 # Add libzxing library.
 file(GLOB_RECURSE LIBZXING_FILES
     "./core/src/*.cpp"

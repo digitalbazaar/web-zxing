@@ -1,0 +1,21 @@
+box:
+    id: mhart/alpine-node
+    cmd: /bin/sh
+build:
+  steps:
+    - script:
+      name: install
+      code: |
+        ln -s /usr/share/emscripten ../emsdk-portable
+        echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
+        echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
+        apk --update add yarn emscripten emscripten-libs-asmjs make cmake emscripten-libs-wasm binaryen git
+    - script:
+      name: opencvjs and opencv
+      code: |
+        git clone https://github.com/H-Plus-Time/opencv --depth=1 && cd opencv && \
+        mkdir -p build && cd build && ../wrapper.sh && emmake make
+    - script:
+      name: actual build
+      code: |
+        touch wasm/web-zxing.js && yarn && yarn run compile && ls wasm

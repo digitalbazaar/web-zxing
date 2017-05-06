@@ -11,14 +11,13 @@ module.exports = {
   ],
   flags: [
     '-s WASM=1',
-    'std=c++11',
+    '-std=c++11',
     '-s ASSERTIONS=1',
     '-O3',
     '-s RESERVED_FUNCTION_POINTERS=20',
     '--bind',
     '-s MODULARIZE=1',
-    '-s EXPORT_NAME="ZXing"',
+    '-s EXPORT_NAME=\"\'ZXing\'\"',
     '-s DISABLE_EXCEPTION_CATCHING=0',
   ],
 };
-
