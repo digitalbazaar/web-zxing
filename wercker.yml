@@ -18,4 +18,4 @@ build:
     - script:
       name: actual build
       code: |
-        touch wasm/web-zxing.js && yarn && yarn run compile && ls wasm
+        yarn && yarn run compile && ls wasm
