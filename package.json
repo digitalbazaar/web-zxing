@@ -1,16 +1,20 @@
 {
   "name": "web-zxing",
-  "version": "0.9.0",
+  "version": "0.0.1",
   "main": "index.js",
   "repository": "https://github.com/H-Plus-Time/web-zxing",
   "author": "Nicholas Roberts <nicholas.roberts.au@gmail.com>",
   "license": "APLv2",
   "scripts": {
     "compile": "wasm-compile",
-    "start": "gulp"
+    "start": "gulp",
+    "test": "echo no tests yet",
+    "posttest": "publish"
   },
-  "dependencies": {
+  "devDependencies": {
+    "browser-sync": "^2.18.8",
     "gulp": "^3.9.1",
+    "publish": "*",
     "wasm-init": "git+https://github.com/H-Plus-Time/wasm-init.git"
   }
 }
