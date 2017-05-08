@@ -10,6 +10,7 @@ build:
         ln -s /opencv ./opencv
         mkdir wasm
         yarn && yarn run compile
+        yarn test
 deploy:
   steps:
     - script:

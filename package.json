@@ -4,7 +4,7 @@
   "main": "index.js",
   "repository": "https://github.com/H-Plus-Time/web-zxing",
   "author": "Nicholas Roberts <nicholas.roberts.au@gmail.com>",
-  "license": "APLv2",
+  "license": "Apache-2.0",
   "scripts": {
     "compile": "wasm-compile",
     "start": "gulp",
