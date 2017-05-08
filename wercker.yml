@@ -20,6 +20,7 @@ deploy:
     - script:
       name: cp output and nuke wasm dir
       code: cp wasm/zxing.* ./ && rm -r wasm
+    - turistforeningen/npm-publish
     - script:
       name: get version
       code: export PACKAGE_VERSION=v$(node -p "require('./package.json').version")

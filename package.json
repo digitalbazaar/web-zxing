@@ -8,13 +8,11 @@
   "scripts": {
     "compile": "wasm-compile",
     "start": "gulp",
-    "test": "echo no tests yet",
-    "posttest": "publish"
+    "test": "echo no tests yet"
   },
   "devDependencies": {
     "browser-sync": "^2.18.8",
     "gulp": "^3.9.1",
-    "publish": "*",
     "wasm-init": "git+https://github.com/H-Plus-Time/wasm-init.git"
   }
 }
