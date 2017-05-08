@@ -1,6 +1,7 @@
 .DS_Store
 /.idea/
 /build/
+wasm
 node_modules
 zxing.wasm
 zxing.js

@@ -1,7 +1,7 @@
 // wasm.config.js
 module.exports = {
   emscripten_path: './../emsdk-portable',
-  outputfile: './zxing.js',
+  outputfile: './wasm/zxing.js',
   mode: 'build',
   exported_functions: [
     '_decode_qr',

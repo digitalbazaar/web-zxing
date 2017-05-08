@@ -8,12 +8,16 @@ build:
       code: |
         ln -s /usr/share/emscripten ../emsdk-portable
         ln -s /opencv ./opencv
+        mkdir wasm
         yarn && yarn run compile
 deploy:
   steps:
     - script:
       name: install curl
       code: apk --update add curl file
+    - script:
+      name: cp output and nuke wasm dir
+      code: cp wasm/zxing.* ./ && rm -r wasm
     - script:
       name: get version
       code: export PACKAGE_VERSION=v$(node -p "require('./package.json').version")

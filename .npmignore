@@ -1,2 +1,3 @@
-!zxing.wasm
-!zxing.js
+!/zxing.wasm
+!/zxing.js
+wasm
