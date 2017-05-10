@@ -1,7 +1,7 @@
 {
   "name": "web-zxing",
-  "version": "0.0.4",
-  "main": "index.js",
+  "version": "0.0.5",
+  "main": "zxing.js",
   "repository": "https://github.com/H-Plus-Time/web-zxing",
   "author": "Nicholas Roberts <nicholas.roberts.au@gmail.com>",
   "license": "Apache-2.0",
