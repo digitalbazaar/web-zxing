@@ -1,10 +1,10 @@
 {
   "name": "web-zxing",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "zxing.js",
   "repository": "https://github.com/H-Plus-Time/web-zxing",
   "author": "Nicholas Roberts <nicholas.roberts.au@gmail.com>",
-  "license": "Apache-2.0",
+  "license": "LGPL-2.0",
   "scripts": {
     "compile": "wasm-compile",
     "start": "gulp",
