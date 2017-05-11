@@ -11,7 +11,7 @@ build:
         ln -s /opencv ./opencv
         mkdir wasm
         yarn && yarn run compile
-        echo "export default ZXing;" >> zxing.js;
+        echo "export default ZXing;" >> wasm/zxing.js;
         yarn test
 deploy:
   steps:
