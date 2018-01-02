@@ -342,7 +342,7 @@ vector< Ref<FinderPattern> > FinderPatternFinder::selectBestPatterns() {
     float stdDev = (float)sqrt(square / startSize - average * average);
 
     sort(possibleCenters_.begin(), possibleCenters_.end(), FurthestFromAverageComparator(average));
-    
+
     float limit = max(0.2f * average, stdDev);
 
     for (size_t i = 0; i < possibleCenters_.size() && possibleCenters_.size() > 3; i++) {

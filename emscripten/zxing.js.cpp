@@ -109,7 +109,7 @@ private:
 public:
   PassthroughBinarizer(Ref<LuminanceSource> source);
   virtual ~PassthroughBinarizer();
-    
+
   virtual Ref<BitArray> getBlackRow(int y, Ref<BitArray> row);
   virtual Ref<BitMatrix> getBlackMatrix();
   Ref<Binarizer> createBinarizer(Ref<LuminanceSource> source);
@@ -134,7 +134,7 @@ namespace {
   const ArrayRef<char> EMPTY (0);
 }
 
-PassthroughBinarizer::PassthroughBinarizer(Ref<LuminanceSource> source) 
+PassthroughBinarizer::PassthroughBinarizer(Ref<LuminanceSource> source)
   : Binarizer(source), luminances(EMPTY) {}
 
 PassthroughBinarizer::~PassthroughBinarizer() {}
@@ -164,7 +164,7 @@ Ref<BitArray> PassthroughBinarizer::getBlackRow(int y, Ref<BitArray> row) {
   }
   return row;
 }
- 
+
 Ref<BitMatrix> PassthroughBinarizer::getBlackMatrix() {
   LuminanceSource& source = *getLuminanceSource();
   int width = source.getWidth();
@@ -180,7 +180,7 @@ Ref<BitMatrix> PassthroughBinarizer::getBlackMatrix() {
       }
     }
   }
-  
+
   return matrix;
 }
 
@@ -226,9 +226,16 @@ extern "C" {
     vector<Ref<Result> > results;
     zxing::ArrayRef<char> image = zxing::ArrayRef<char>(width*height);
     Ref<LuminanceSource> source = Ref<LuminanceSource>(new ImageReaderSource(image, width, height));
+    // NOTE: commented because javascript can write 1/4 of the data to linear
+    // memory
+    // for(int i = 0; i < height*width; i++) {
+    //   image[i] = data[i*4];
+    // }
+    // FIXME: faster/better way to do this?
     for(int i = 0; i < height*width; i++) {
-      image[i] = data[i*4];
+      image[i] = data[i];
     }
+
     try {
 
       DecodeHints hints(DecodeHints::DEFAULT_HINT);
@@ -261,17 +268,19 @@ extern "C" {
         ex_results->push_back(newResult);
       }
     } catch (const ReaderException& e) {
-      // cout << e << endl;
+      cout << e.what() << endl;
       cout << "reader exception" << endl;
     } catch (const zxing::IllegalArgumentException& e) {
-      // cout << e << endl;
+      cout << e.what() << endl;
       cout << "illegal arg" << endl;
     } catch (const zxing::Exception& e) {
-      // cout << e << endl;
+      cout << e.what() << endl;
       cout << "general zxing error" << endl;
     } catch (const std::exception& e) {
-      // cout << e << endl;
+      cout << e.what() << endl;
     }
+    for(vector<ZXingResult>::iterator it = ex_results->begin(); it != ex_results->end(); ++it)
+      cout << &it->data << endl;
     return ex_results;
   }
 

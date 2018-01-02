@@ -1,7 +1,8 @@
 <html>
 <body>
 
-<script src="../../wasm/zxing.js"></script>
+<script src="zxing.js"></script>
+<!-- <script src="../../wasm/zxing.js"></script> -->
 
 <script>
 
@@ -84,30 +85,36 @@ function resample_single(canvas, width, height, resize_canvas) {
 
 function testZXing() {
 	var img = new Image;
-	img.src = 'Qr-2.png';
+	img.src = 'Qr-7.png';
 	img.onload = function() {
-
-		var width = Math.floor(this.width),
-			height = Math.floor(this.height);
+		// var width = Math.floor(this.width),
+		// 	height = Math.floor(this.height);
+		var width = 300,
+			height = 300;
 
 		var canvas = document.createElement('canvas');
-		canvas.style.display = 'block';
-		canvas.width = width;
-		canvas.height = height;
+    canvas.setAttribute('style', 'display:block;');
+    canvas.setAttribute('width', width);
+    canvas.setAttribute('height', height);
 		var ctx = canvas.getContext('2d');
-		// ctx.rotate(Math.random()*0.1-0.05);
-		ctx.drawImage(this, 0, 0, width, height);
-		resample_single(canvas, 55, 55, true);
+		ctx.rotate(Math.random()*0.3-0.05);
+		ctx.drawImage(this, 50, 0, width * .5, height *.5);
+		// resample_single(canvas, 55, 55, true);
 		width = canvas.width;
 		height = canvas.height;
 		var imageData = ctx.getImageData(0, 0, width, height);
-		var idd = imageData.data;
-		document.body.appendChild(canvas);
+		// var idd = imageData.data;
+		document.body.append(canvas);
+
+    const frameArray = new Uint8Array(width * height);
+    for(let i = 0; i < width * height; i++) {
+      frameArray[i] = imageData.data[i * 4];
+    }
 
 		// the crucial bit
-		var len = idd.length;
-		var image = ZXing._malloc(len);
-		ZXing.HEAPU8.set(idd, image);
+		// var len = idd.length;
+		var image = ZXing._malloc(frameArray.length);
+		ZXing.HEAPU8.set(frameArray, image);
 
 		var ptr = ZXing._decode_qr(image, width, height);
 		// instantiate, read and teardown
@@ -121,13 +128,14 @@ function testZXing() {
 		// for (var i=0, j=0; i<idd.length; i+=4, j++) {
 		// 	ZXing.HEAPU8[image + j] = idd[i];
 		// }
-		var len = idd.length;
-		var image = ZXing._malloc(len);
-		ZXing.HEAPU8.set(idd, image);
-		ptr = ZXing._decode_qr(image,width,height);
-		detected_codes = new ZXing.VectorZXingResult(ptr);
-		detected_codes.delete();
-		console.timeEnd("decode QR");
+
+		// var len = idd.length;
+		// var image = ZXing._malloc(len);
+		// ZXing.HEAPU8.set(idd, image);
+		// ptr = ZXing._decode_qr(image,width,height);
+		// detected_codes = new ZXing.VectorZXingResult(ptr);
+		// detected_codes.delete();
+		// console.timeEnd("decode QR");
 
 	};
 };

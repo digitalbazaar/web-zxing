@@ -49,6 +49,10 @@ if(WASM_CXXFLAGS)
     set(CMAKE_CXX_FLAGS ${WASM_CXXFLAGS})
 else()
     set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O3 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
+# this next one mostly works
+# set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O3 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 --pre-js ../prejs.js -s USE_CLOSURE_COMPILER=1 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
+#    set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O2 --js-opts 0 -g4 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 --pre-js ../prejs.js -s USE_CLOSURE_COMPILER=1 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
+#    set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O1 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 -s SIDE_MODULE=1 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
 endif()
 
 # Add libzxing library.

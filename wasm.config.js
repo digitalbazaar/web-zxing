@@ -19,5 +19,6 @@ module.exports = {
     '-s MODULARIZE=1',
     '-s EXPORT_NAME=\"\'ZXing\'\"',
     '-s DISABLE_EXCEPTION_CATCHING=0',
+    '--pre-js \"prejs.js\"'
   ],
 };
