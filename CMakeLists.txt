@@ -48,7 +48,10 @@ endif()
 if(WASM_CXXFLAGS)
     set(CMAKE_CXX_FLAGS ${WASM_CXXFLAGS})
 else()
-    set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O3 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
+# this works with html test
+#    set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O3 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
+# this is working in bedrock-angular-qr-scanner.  -g1 causes the .js component not to be optimized so that it can be easily edited.  USE_CLOSURE_COMPILER may be optional here.
+    set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O3 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 --pre-js ../prejs.js -g1 -s USE_CLOSURE_COMPILER=1 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
 # this next one mostly works
 # set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O3 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 --pre-js ../prejs.js -s USE_CLOSURE_COMPILER=1 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")
 #    set(CMAKE_CXX_FLAGS "-std=c++11 --bind -s RESERVED_FUNCTION_POINTERS=20 -s WASM=1 -O2 --js-opts 0 -g4 -s MODULARIZE=1 -s EXPORT_NAME=\"'ZXing'\" -s DISABLE_EXCEPTION_CATCHING=0 --pre-js ../prejs.js -s USE_CLOSURE_COMPILER=1 -s EXPORTED_FUNCTIONS=\"['_decode_qr','_decode_qr_multi','_decode_any','_decode_multi']\"")

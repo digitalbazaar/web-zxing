@@ -268,19 +268,21 @@ extern "C" {
         ex_results->push_back(newResult);
       }
     } catch (const ReaderException& e) {
-      cout << e.what() << endl;
-      cout << "reader exception" << endl;
+      // FIXME: determine how to output these messages in debug mode.
+      // cout << e.what() << endl;
+      // cout << "reader exception" << endl;
     } catch (const zxing::IllegalArgumentException& e) {
-      cout << e.what() << endl;
-      cout << "illegal arg" << endl;
+      // cout << e.what() << endl;
+      // cout << "illegal arg" << endl;
     } catch (const zxing::Exception& e) {
-      cout << e.what() << endl;
-      cout << "general zxing error" << endl;
+      // cout << e.what() << endl;
+      // cout << "general zxing error" << endl;
     } catch (const std::exception& e) {
-      cout << e.what() << endl;
+      // cout << e.what() << endl;
     }
-    for(vector<ZXingResult>::iterator it = ex_results->begin(); it != ex_results->end(); ++it)
-      cout << &it->data << endl;
+    // NOTE: this iterator returns a pointer, not the text
+    // for(vector<ZXingResult>::iterator it = ex_results->begin(); it != ex_results->end(); ++it)
+    //   cout << &it->data << endl;
     return ex_results;
   }
 
