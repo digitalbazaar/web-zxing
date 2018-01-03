@@ -106,20 +106,30 @@ function testZXing() {
 		// var idd = imageData.data;
 		document.body.append(canvas);
 
-    const frameArray = new Uint8Array(width * height);
-    for(let i = 0; i < width * height; i++) {
-      frameArray[i] = imageData.data[i * 4];
+    // although the original image contains 4 bytes per pixel, only 1 byte
+    // per pixel will be sent to wasm
+    const frameBytes = width * height;
+		const framePtr = ZXing._malloc(frameBytes);
+    const frameBuffer = new Uint8Array(
+      ZXing.HEAPU8.buffer, framePtr, frameBytes);
+    // const frameArray = new Uint8Array(width * height);
+    // for(let i = 0; i < width * height; i++) {
+    //   frameArray[i] = imageData.data[i * 4];
+    // }
+    for(let i = 0; i < frameBytes; i++) {
+      frameBuffer[i] = imageData.data[i * 4];
     }
 
 		// the crucial bit
 		// var len = idd.length;
-		var image = ZXing._malloc(frameArray.length);
-		ZXing.HEAPU8.set(frameArray, image);
+		// var image = ZXing._malloc(frameArray.length);
+		// ZXing.HEAPU8.set(frameArray, image);
 
-		var ptr = ZXing._decode_qr(image, width, height);
+		// var ptr = ZXing._decode_qr(image, width, height);
+		const ptr = ZXing._decode_qr(framePtr, width, height);
 		// instantiate, read and teardown
 		detected_codes = new ZXing.VectorZXingResult(ptr);
-		for(i = 0; i < detected_codes.size(); i++) {
+		for(let i = 0; i < detected_codes.size(); i++) {
 			console.log(detected_codes.get(i))
 		}
 		detected_codes.delete();
@@ -136,7 +146,6 @@ function testZXing() {
 		// detected_codes = new ZXing.VectorZXingResult(ptr);
 		// detected_codes.delete();
 		// console.timeEnd("decode QR");
-
 	};
 };
 </script>
